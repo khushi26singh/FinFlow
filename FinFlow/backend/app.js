@@ -4,6 +4,8 @@ const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const healthRoutes = require('./routes/healthRoutes');
 const authRoutes = require('./routes/authRoutes');
+const loanProductRoutes = require('./routes/loanProductRoutes');
+const loanApplicationRoutes = require('./routes/loanApplicationRoutes');
 
 const app = express();
 
@@ -17,5 +19,7 @@ app.use(cookieParser());
 // Base Routes
 app.use('/api', healthRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/loans/products', loanProductRoutes);
+app.use('/api/loans', loanApplicationRoutes);
 
 module.exports = app;
