@@ -1,14 +1,19 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import LoanProducts from './pages/customer/LoanProducts';
-import ProtectedRoute from './components/ProtectedRoute';
+import EMICalculator from './pages/customer/EMICalculator';
+
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
     <AuthProvider>
+      <ToastContainer position="top-right" theme="dark" autoClose={3000} />
       <Router>
         <Routes>
           <Route path="/login" element={<Login />} />
@@ -26,6 +31,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <LoanProducts />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/emi-calculator"
+            element={
+              <ProtectedRoute>
+                <EMICalculator />
               </ProtectedRoute>
             }
           />

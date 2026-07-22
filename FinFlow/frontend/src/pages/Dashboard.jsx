@@ -19,12 +19,18 @@ export default function Dashboard() {
               Role: <span className="font-medium text-cyan-200 capitalize">{user?.role}</span>
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <Link
               to="/loan-products"
               className="rounded-full border border-cyan-300/30 bg-cyan-400/10 px-4 py-2 text-sm font-medium text-cyan-100 transition hover:bg-cyan-400/20"
             >
               Browse Loan Products
+            </Link>
+            <Link
+              to="/emi-calculator"
+              className="rounded-full border border-indigo-300/30 bg-indigo-500/20 px-4 py-2 text-sm font-medium text-indigo-100 transition hover:bg-indigo-500/30"
+            >
+              EMI Calculator
             </Link>
             <button
               onClick={logout}
@@ -65,9 +71,14 @@ export default function Dashboard() {
                 <h2 className="text-lg font-semibold text-white">Available Loans</h2>
                 <p className="mt-1 text-sm text-slate-300">Browse products before starting an application.</p>
               </div>
-              <Link to="/loan-products" className="text-sm font-medium text-cyan-200 hover:text-cyan-100">
-                View all
-              </Link>
+              <div className="flex items-center gap-4">
+                <Link to="/emi-calculator" className="text-sm font-medium text-indigo-300 hover:text-indigo-200">
+                  Calculate EMI
+                </Link>
+                <Link to="/loan-products" className="text-sm font-medium text-cyan-200 hover:text-cyan-100">
+                  View all
+                </Link>
+              </div>
             </div>
             <div className="mt-5 grid gap-3 md:grid-cols-2">
               <div className="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
