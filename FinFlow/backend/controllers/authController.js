@@ -18,14 +18,11 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ success: false, message: 'User already exists' });
     }
 
-    // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
+    // Pass password directly; User model pre-save middleware handles hashing
     const user = await User.create({
       name,
       email,
-      password: hashedPassword,
+      password,
       role: role || 'applicant',
       phone: phone || '',
     });
@@ -58,7 +55,7 @@ const loginUser = async (req, res) => {
 
     const user = await User.findOne({ email }).select('+password');
 
-    if (user && (await bcrypt.compare(password, user.password))) {
+    if (user && (await user.matchPassword(password))) {
       res.json({
         success: true,
         data: {

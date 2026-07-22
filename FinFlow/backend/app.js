@@ -20,6 +20,7 @@ app.use(cookieParser());
 // Base Routes
 app.use('/api', healthRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/loan-products', loanProductRoutes);
 app.use('/api/loans/products', loanProductRoutes);
 app.use('/api/loans', loanApplicationRoutes);
 app.use('/api/credit', creditScoreRoutes);
