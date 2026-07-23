@@ -44,6 +44,18 @@ const loanApplicationSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     },
+    eligibility: {
+      isEligible: { type: Boolean },
+      checks: [
+        {
+          rule: { type: String },
+          label: { type: String },
+          value: { type: mongoose.Schema.Types.Mixed },
+          passed: { type: Boolean },
+        },
+      ],
+      evaluatedAt: { type: Date },
+    },
   },
   { timestamps: true }
 );

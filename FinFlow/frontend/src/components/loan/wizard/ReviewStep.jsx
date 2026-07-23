@@ -1,32 +1,42 @@
-export default function StepIndicator({ steps, currentStep }) {
+export default function ReviewStep({ formData = {}, selectedProduct = {} }) {
   return (
-    <div className="flex items-center justify-between rounded-3xl border border-white/10 bg-white/6 p-4 backdrop-blur">
-      {steps.map((s, index) => {
-        const isActive = s.id === currentStep;
-        const isComplete = s.id < currentStep;
+    <div className="space-y-6 text-white">
+      <div>
+        <h3 className="text-xl font-bold text-cyan-400">Review Application</h3>
+        <p className="text-sm text-slate-400">Please verify your details before submitting.</p>
+      </div>
 
-        return (
-          <div key={s.id} className="flex flex-1 items-center">
-            <div className="flex flex-col items-center gap-2 text-center">
-              <div
-                className={`flex h-9 w-9 items-center justify-center rounded-full border text-sm font-semibold transition ${
-                  isComplete
-                    ? 'border-emerald-300/40 bg-emerald-400/20 text-emerald-200'
-                    : isActive
-                    ? 'border-cyan-300/50 bg-cyan-400/20 text-cyan-100'
-                    : 'border-white/15 bg-white/5 text-slate-400'
-                }`}
-              >
-                {isComplete ? '✓' : s.id}
-              </div>
-              <span className={`text-xs ${isActive ? 'text-white' : 'text-slate-400'}`}>{s.label}</span>
-            </div>
-            {index < steps.length - 1 && (
-              <div className={`mx-2 h-px flex-1 ${isComplete ? 'bg-emerald-300/40' : 'bg-white/10'}`} />
-            )}
-          </div>
-        );
-      })}
+      {/* Personal Details */}
+      <div className="rounded-xl border border-white/10 bg-white/5 p-4 space-y-2">
+        <h4 className="font-semibold text-slate-300 border-b border-white/10 pb-1">Personal Details</h4>
+        <div className="grid grid-cols-2 gap-2 text-sm">
+          <p><span className="text-slate-400">Full Name:</span> {formData.fullName || '—'}</p>
+          <p><span className="text-slate-400">DOB:</span> {formData.dateOfBirth || '—'}</p>
+          <p><span className="text-slate-400">Phone:</span> {formData.phone || '—'}</p>
+          <p><span className="text-slate-400">City:</span> {formData.city || '—'}</p>
+        </div>
+      </div>
+
+      {/* Employment Details */}
+      <div className="rounded-xl border border-white/10 bg-white/5 p-4 space-y-2">
+        <h4 className="font-semibold text-slate-300 border-b border-white/10 pb-1">Employment Details</h4>
+        <div className="grid grid-cols-2 gap-2 text-sm">
+          <p><span className="text-slate-400">Type:</span> {formData.employmentType || '—'}</p>
+          <p><span className="text-slate-400">Employer:</span> {formData.employerName || '—'}</p>
+          <p><span className="text-slate-400">Monthly Income:</span> ₹{formData.monthlyIncome || '0'}</p>
+          <p><span className="text-slate-400">Experience:</span> {formData.experienceMonths || '0'} months</p>
+        </div>
+      </div>
+
+      {/* Loan Details */}
+      <div className="rounded-xl border border-white/10 bg-white/5 p-4 space-y-2">
+        <h4 className="font-semibold text-slate-300 border-b border-white/10 pb-1">Loan Information</h4>
+        <div className="grid grid-cols-2 gap-2 text-sm">
+          <p><span className="text-slate-400">Product:</span> {selectedProduct?.name || 'Personal Loan'}</p>
+          <p><span className="text-slate-400">Requested Amount:</span> ₹{formData.requestedAmount || '0'}</p>
+          <p><span className="text-slate-400">Tenure:</span> {formData.tenureMonths || '0'} months</p>
+        </div>
+      </div>
     </div>
   );
 }

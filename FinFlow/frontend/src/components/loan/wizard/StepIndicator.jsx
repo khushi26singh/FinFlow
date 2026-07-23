@@ -1,12 +1,14 @@
-export default function StepIndicator({ steps, currentStep }) {
+export default function StepIndicator({ steps = [], currentStep = 1 }) {
+  if (!steps?.length) return null;
+
   return (
-    <div className="flex items-center justify-between rounded-3xl border border-white/10 bg-white/6 p-4 backdrop-blur">
-      {steps.map((s, index) => {
+    <div className="flex items-center justify-between rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur">
+      {steps?.map((s, index) => {
         const isActive = s.id === currentStep;
         const isComplete = s.id < currentStep;
 
         return (
-          <div key={s.id} className="flex flex-1 items-center">
+          <div key={s.id || index} className="flex flex-1 items-center">
             <div className="flex flex-col items-center gap-2 text-center">
               <div
                 className={`flex h-9 w-9 items-center justify-center rounded-full border text-sm font-semibold transition ${

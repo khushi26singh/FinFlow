@@ -93,8 +93,16 @@ export default function ApplyLoan() {
         },
       };
 
-      await API.post('/loans/apply', payload);
-      toast.success('Application submitted successfully');
+      const { data } = await API.post('/loans/apply', payload);
+
+      if (data.data?.eligibility?.isEligible === false) {
+        toast.warn(
+          'Application submitted, but it did not meet our eligibility criteria and was automatically declined. An underwriter may still review it.'
+        );
+      } else {
+        toast.success('Application submitted and is now under review');
+      }
+
       navigate('/dashboard');
     } catch (err) {
       toast.error(err?.response?.data?.message || 'Failed to submit application');

@@ -1,9 +1,10 @@
 // backend/services/loanApplicationService.js
 const LoanApplication = require('../models/LoanApplication');
+const eligibilityService = require('./eligibilityService');
 
 class LoanApplicationService {
   async createApplication(applicantId, payload) {
-    return LoanApplication.create({
+    const application = await LoanApplication.create({
       applicant: applicantId,
       loanProduct: payload.loanProduct,
       personalDetails: payload.personalDetails,
@@ -11,6 +12,20 @@ class LoanApplicationService {
       requestedAmount: payload.requestedAmount,
       tenureMonths: payload.tenureMonths,
     });
+
+    await application.populate('loanProduct', 'interestRate');
+
+    const eligibilityResult = await eligibilityService.evaluateApplication(application);
+
+    application.eligibility = eligibilityResult;
+    application.status = eligibilityResult.isEligible ? 'under_review' : 'rejected';
+    if (!eligibilityResult.isEligible) {
+      application.remarks = 'Automatically rejected: application did not meet eligibility criteria.';
+    }
+
+    await application.save();
+
+    return application;
   }
 
   async getApplicationsForUser(applicantId) {

@@ -8,6 +8,7 @@ const loanProductRoutes = require('./routes/loanProductRoutes');
 const loanApplicationRoutes = require('./routes/loanApplicationRoutes');
 const creditScoreRoutes = require('./routes/creditScoreRoutes');
 const emiRoutes = require('./routes/emiRoutes');
+const eligibilityRoutes = require('./routes/eligibilityRoutes');
 
 const app = express();
 
@@ -17,6 +18,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(morgan('dev'));
 app.use(cookieParser());
+
+app.use('/api/eligibility', eligibilityRoutes);
 
 // Base Routes
 app.use('/api', healthRoutes);
