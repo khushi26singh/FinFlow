@@ -1,19 +1,56 @@
-const LoanApplication = require('../models/LoanApplication');
+const loanApplicationService = require('../services/loanApplicationService');
+
+const validateApplicationPayload = (payload) => {
+  const requiredTopLevel = ['loanProduct', 'requestedAmount', 'tenureMonths', 'personalDetails', 'employmentDetails'];
+  const missingTopLevel = requiredTopLevel.filter((field) => payload[field] === undefined || payload[field] === null);
+  if (missingTopLevel.length > 0) {
+    return `Missing required fields: ${missingTopLevel.join(', ')}`;
+  }
+
+  const requiredPersonalFields = ['fullName', 'dateOfBirth', 'phone', 'address', 'city', 'state', 'pincode'];
+  const missingPersonal = requiredPersonalFields.filter((field) => !payload.personalDetails[field]);
+  if (missingPersonal.length > 0) {
+    return `Missing personal details: ${missingPersonal.join(', ')}`;
+  }
+
+  const requiredEmploymentFields = ['employmentType', 'monthlyIncome', 'experienceMonths'];
+  const missingEmployment = requiredEmploymentFields.filter(
+    (field) => payload.employmentDetails[field] === undefined || payload.employmentDetails[field] === ''
+  );
+  if (missingEmployment.length > 0) {
+    return `Missing employment details: ${missingEmployment.join(', ')}`;
+  }
+
+  if (Number(payload.requestedAmount) <= 0) {
+    return 'Requested amount must be greater than 0';
+  }
+
+  if (Number(payload.tenureMonths) <= 0) {
+    return 'Tenure must be greater than 0 months';
+  }
+
+  if (Number(payload.employmentDetails.monthlyIncome) < 0) {
+    return 'Monthly income cannot be negative';
+  }
+
+  if (Number(payload.employmentDetails.experienceMonths) < 0) {
+    return 'Experience cannot be negative';
+  }
+
+  return null;
+};
 
 // @desc    Apply for a loan
 // @route   POST /api/loans/apply
 // @access  Private (Applicant)
 const applyForLoan = async (req, res) => {
   try {
-    const { loanProduct, amountRequested, tenureMonths } = req.body;
+    const validationError = validateApplicationPayload(req.body);
+    if (validationError) {
+      return res.status(400).json({ success: false, message: validationError });
+    }
 
-    const application = await LoanApplication.create({
-      applicant: req.user._id,
-      loanProduct,
-      amountRequested,
-      tenureMonths,
-    });
-
+    const application = await loanApplicationService.createApplication(req.user._id, req.body);
     res.status(201).json({ success: true, data: application });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
@@ -25,8 +62,7 @@ const applyForLoan = async (req, res) => {
 // @access  Private (Applicant)
 const getMyApplications = async (req, res) => {
   try {
-    const applications = await LoanApplication.find({ applicant: req.user._id })
-      .populate('loanProduct', 'name interestRate');
+    const applications = await loanApplicationService.getApplicationsForUser(req.user._id);
     res.json({ success: true, count: applications.length, data: applications });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -38,9 +74,7 @@ const getMyApplications = async (req, res) => {
 // @access  Private (Underwriter/Admin)
 const getAllApplications = async (req, res) => {
   try {
-    const applications = await LoanApplication.find()
-      .populate('applicant', 'name email')
-      .populate('loanProduct', 'name interestRate');
+    const applications = await loanApplicationService.getAllApplications();
     res.json({ success: true, count: applications.length, data: applications });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -53,17 +87,16 @@ const getAllApplications = async (req, res) => {
 const updateLoanStatus = async (req, res) => {
   try {
     const { status, rejectionReason } = req.body;
-    const application = await LoanApplication.findById(req.params.id);
+    const application = await loanApplicationService.updateStatus(req.params.id, {
+      status,
+      rejectionReason,
+      underwriterId: req.user?._id,
+    });
 
     if (!application) {
       return res.status(404).json({ success: false, message: 'Application not found' });
     }
 
-    application.status = status || application.status;
-    if (rejectionReason) application.rejectionReason = rejectionReason;
-    if (req.user) application.assignedUnderwriter = req.user._id;
-
-    await application.save();
     res.json({ success: true, data: application });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });

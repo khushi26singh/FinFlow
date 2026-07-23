@@ -10,6 +10,26 @@ const loanApplicationSchema = new mongoose.Schema(
     loanProduct: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'LoanProduct',
+      required: true,
+    },
+    personalDetails: {
+      fullName: { type: String, required: true },
+      dateOfBirth: { type: Date, required: true },
+      phone: { type: String, required: true },
+      address: { type: String, required: true },
+      city: { type: String, required: true },
+      state: { type: String, required: true },
+      pincode: { type: String, required: true },
+    },
+    employmentDetails: {
+      employmentType: {
+        type: String,
+        enum: ['salaried', 'self_employed', 'business_owner', 'unemployed'],
+        required: true,
+      },
+      employerName: { type: String },
+      monthlyIncome: { type: Number, required: true },
+      experienceMonths: { type: Number, required: true },
     },
     requestedAmount: { type: Number, required: true },
     tenureMonths: { type: Number, required: true },
@@ -20,6 +40,10 @@ const loanApplicationSchema = new mongoose.Schema(
     },
     creditScore: { type: Number },
     remarks: { type: String },
+    assignedUnderwriter: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
   },
   { timestamps: true }
 );

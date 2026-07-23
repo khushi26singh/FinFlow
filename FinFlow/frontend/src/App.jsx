@@ -6,6 +6,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import LoanProducts from './pages/customer/LoanProducts';
 import EMICalculator from './pages/customer/EMICalculator';
+import ApplyLoan from './pages/customer/ApplyLoan';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -31,6 +32,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <LoanProducts />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/apply-loan"
+            element={
+              <ProtectedRoute>
+                <ApplyLoan />
               </ProtectedRoute>
             }
           />

@@ -27,6 +27,12 @@ export default function Dashboard() {
               Browse Loan Products
             </Link>
             <Link
+  to="/apply-loan"
+  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow transition-colors"
+>
+  Apply for a Loan
+</Link>
+            <Link
               to="/emi-calculator"
               className="rounded-full border border-indigo-300/30 bg-indigo-500/20 px-4 py-2 text-sm font-medium text-indigo-100 transition hover:bg-indigo-500/30"
             >

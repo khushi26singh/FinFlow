@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import API from '../../services/api';
 import LoanCard from '../../components/loan/LoanCard';
 
@@ -7,6 +7,7 @@ export default function LoanProducts() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchLoanProducts = async () => {
@@ -24,7 +25,7 @@ export default function LoanProducts() {
   }, []);
 
   const handleApply = (product) => {
-    console.log('Apply for product:', product);
+    navigate('/apply-loan', { state: { productId: product._id } });
   };
 
   return (

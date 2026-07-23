@@ -24,6 +24,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/loan-products', loanProductRoutes);
 app.use('/api/loans/products', loanProductRoutes);
 app.use('/api/loans', loanApplicationRoutes);
+app.use('/api/loan', loanApplicationRoutes);
 app.use('/api/credit', creditScoreRoutes);
 app.use('/api/emi', emiRoutes);
 
