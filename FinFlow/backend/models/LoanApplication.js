@@ -35,7 +35,7 @@ const loanApplicationSchema = new mongoose.Schema(
     tenureMonths: { type: Number, required: true },
     status: {
       type: String,
-      enum: ['pending', 'under_review', 'approved', 'rejected'],
+      enum: ['pending', 'under_review', 'approved', 'agreement', 'disbursed', 'rejected'],
       default: 'pending',
     },
     creditScore: { type: Number },
