@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import AdminRoute from './components/admin/AdminRoute';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
@@ -8,6 +9,11 @@ import LoanProducts from './pages/customer/LoanProducts';
 import EMICalculator from './pages/customer/EMICalculator';
 import ApplyLoan from './pages/customer/ApplyLoan';
 import LoanHistory from './pages/customer/LoanHistory';
+import AdminLayout from './components/admin/AdminLayout';
+import AdminDashboard from './pages/admin/Dashboard';
+import AdminApplications from './pages/admin/Applications';
+import AdminLoanProducts from './pages/admin/LoanProducts';
+import AdminUsers from './pages/admin/Users';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -60,6 +66,20 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/admin"
+            element={
+              <AdminRoute>
+                <AdminLayout />
+              </AdminRoute>
+            }
+          >
+            <Route index element={<AdminDashboard />} />
+            <Route path="applications" element={<AdminApplications />} />
+            <Route path="loan-products" element={<AdminLoanProducts />} />
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="*" element={<Navigate to="/admin" replace />} />
+          </Route>
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>

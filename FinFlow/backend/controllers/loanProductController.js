@@ -35,9 +35,6 @@ const validateLoanProductPayload = (payload, { partial = false } = {}) => {
   return null;
 };
 
-// @desc    Get all active loan products
-// @route   GET /api/loan-products
-// @access  Public
 const getLoanProducts = async (req, res) => {
   try {
     const products = await loanProductService.getAllProducts({
@@ -49,9 +46,6 @@ const getLoanProducts = async (req, res) => {
   }
 };
 
-// @desc    Get single loan product
-// @route   GET /api/loan-products/:id
-// @access  Public
 const getLoanProductById = async (req, res) => {
   try {
     const product = await loanProductService.getProductById(req.params.id);
@@ -66,9 +60,6 @@ const getLoanProductById = async (req, res) => {
   }
 };
 
-// @desc    Create a new loan product
-// @route   POST /api/loan-products
-// @access  Private (Admin only)
 const createLoanProduct = async (req, res) => {
   try {
     const validationError = validateLoanProductPayload(req.body);
@@ -83,9 +74,6 @@ const createLoanProduct = async (req, res) => {
   }
 };
 
-// @desc    Update a loan product
-// @route   PUT /api/loan-products/:id
-// @access  Private (Admin only)
 const updateLoanProduct = async (req, res) => {
   try {
     const validationError = validateLoanProductPayload(req.body, { partial: true });
@@ -105,9 +93,6 @@ const updateLoanProduct = async (req, res) => {
   }
 };
 
-// @desc    Delete a loan product
-// @route   DELETE /api/loan-products/:id
-// @access  Private (Admin only)
 const deleteLoanProduct = async (req, res) => {
   try {
     const product = await loanProductService.deleteProduct(req.params.id);

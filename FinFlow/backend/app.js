@@ -9,6 +9,7 @@ const loanApplicationRoutes = require('./routes/loanApplicationRoutes');
 const creditScoreRoutes = require('./routes/creditScoreRoutes');
 const emiRoutes = require('./routes/emiRoutes');
 const eligibilityRoutes = require('./routes/eligibilityRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 
@@ -26,9 +27,11 @@ app.use('/api', healthRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/loan-products', loanProductRoutes);
 app.use('/api/loans/products', loanProductRoutes);
+app.use('/api/loans/applications', loanApplicationRoutes);
 app.use('/api/loans', loanApplicationRoutes);
 app.use('/api/loan', loanApplicationRoutes);
 app.use('/api/credit', creditScoreRoutes);
 app.use('/api/emi', emiRoutes);
+app.use('/api/users', userRoutes);
 
 module.exports = app;

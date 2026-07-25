@@ -12,10 +12,17 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await login(email, password);
-      navigate('/dashboard');
+      // Capture the returned user data from your login function
+      const userData = await login(email, password);
+      
+      // Route based on the user's role
+      if (userData && (userData.role === 'admin' || userData.role === 'underwriter')) {
+        navigate('/admin');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
+      setError(err.response?.data?.message || err.message || 'Login failed');
     }
   };
 
