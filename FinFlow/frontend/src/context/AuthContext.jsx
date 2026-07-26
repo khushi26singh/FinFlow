@@ -7,13 +7,15 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const getAuthPayload = (responseData) => responseData?.data || responseData;
+
   useEffect(() => {
     const checkLoggedIn = async () => {
       const token = localStorage.getItem('token');
       if (token) {
         try {
           const { data } = await API.get('/auth/me');
-          setUser(data.data);
+          setUser(getAuthPayload(data));
         } catch (err) {
           localStorage.removeItem('token');
           setUser(null);
@@ -26,18 +28,20 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     const { data } = await API.post('/auth/login', { email, password });
-    localStorage.setItem('token', data.data.token);
-    setUser(data.data);
+    const authPayload = getAuthPayload(data);
+    localStorage.setItem('token', authPayload.token);
+    setUser(authPayload);
   
     // Change this line to return data.data instead of just data
-    return data.data; 
+    return authPayload; 
   };
 
   const register = async (userData) => {
     const { data } = await API.post('/auth/register', userData);
-    localStorage.setItem('token', data.data.token);
-    setUser(data.data);
-    return data;
+    const authPayload = getAuthPayload(data);
+    localStorage.setItem('token', authPayload.token);
+    setUser(authPayload);
+    return authPayload;
   };
 
   const logout = () => {

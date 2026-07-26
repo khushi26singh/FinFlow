@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import API from '../services/api';
+import DocumentUpload from '../components/loan/DocumentUpload';
 
 const STATUS_STYLES = {
   pending: { label: 'Pending', badge: 'border-slate-300/30 bg-slate-400/10 text-slate-200' },
@@ -34,41 +35,46 @@ export default function Dashboard() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({});
+  const [uploadingAppId, setUploadingAppId] = useState(null);
 
   const firstName = user?.name?.split(' ')[0] || 'there';
 
+  const fetchDashboardData = async () => {
+    setLoading(true);
+
+    const [applicationsResult, creditResult, productsResult] = await Promise.allSettled([
+      API.get('/loans/my-applications'),
+      API.get('/credit/my-score'),
+      API.get('/loan-products'),
+    ]);
+
+    const nextErrors = {};
+
+    if (applicationsResult.status === 'fulfilled') {
+      const resData = applicationsResult.value.data;
+      // This catches it whether it's wrapped in .data, .applications, or is just a raw array!
+      setApplications(resData.data || resData.applications || (Array.isArray(resData) ? resData : []));
+    } else {
+      nextErrors.applications = 'Failed to load your applications';
+    }
+
+    if (creditResult.status === 'fulfilled') {
+      setCreditProfile(creditResult.value.data.data || null);
+    } else {
+      nextErrors.credit = 'Failed to load your credit profile';
+    }
+
+    if (productsResult.status === 'fulfilled') {
+      setProducts(productsResult.value.data.data || []);
+    } else {
+      nextErrors.products = 'Failed to load loan products';
+    }
+
+    setErrors(nextErrors);
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const fetchDashboardData = async () => {
-      const [applicationsResult, creditResult, productsResult] = await Promise.allSettled([
-        API.get('/loans/my-applications'),
-        API.get('/credit/my-score'),
-        API.get('/loan-products'),
-      ]);
-
-      const nextErrors = {};
-
-      if (applicationsResult.status === 'fulfilled') {
-        setApplications(applicationsResult.value.data.data || []);
-      } else {
-        nextErrors.applications = 'Failed to load your applications';
-      }
-
-      if (creditResult.status === 'fulfilled') {
-        setCreditProfile(creditResult.value.data.data || null);
-      } else {
-        nextErrors.credit = 'Failed to load your credit profile';
-      }
-
-      if (productsResult.status === 'fulfilled') {
-        setProducts(productsResult.value.data.data || []);
-      } else {
-        nextErrors.products = 'Failed to load loan products';
-      }
-
-      setErrors(nextErrors);
-      setLoading(false);
-    };
-
     fetchDashboardData();
   }, []);
 
@@ -78,6 +84,19 @@ export default function Dashboard() {
 
   const handleApplyForProduct = (product) => {
     navigate('/apply-loan', { state: { productId: product._id } });
+  };
+
+  const openUploadForApplication = (applicationId) => {
+    setUploadingAppId(applicationId);
+  };
+
+  const closeUploadView = () => {
+    setUploadingAppId(null);
+  };
+
+  const handleUploadSuccess = async () => {
+    closeUploadView();
+    await fetchDashboardData();
   };
 
   return (
@@ -179,20 +198,45 @@ export default function Dashboard() {
               ) : (
                 applications.slice(0, 4).map((app) => {
                   const style = STATUS_STYLES[app.status] || STATUS_STYLES.pending;
+                  const isUploadOpen = uploadingAppId === app._id;
                   return (
-                    <div
-                      key={app._id}
-                      className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-slate-950/40 p-4"
-                    >
-                      <div>
-                        <p className="text-sm font-medium text-white">{app.loanProduct?.name || 'Loan product'}</p>
-                        <p className="mt-1 text-xs text-slate-400">
-                          {formatCurrency(app.requestedAmount)} · {app.tenureMonths} months
-                        </p>
+                    <div key={app._id} className="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                          <p className="text-sm font-medium text-white">{app.loanProduct?.name || 'Loan product'}</p>
+                          <p className="mt-1 text-xs text-slate-400">
+                            {formatCurrency(app.requestedAmount)} · {app.tenureMonths} months
+                          </p>
+                        </div>
+                        <span className={`rounded-full border px-3 py-1 text-xs font-medium ${style.badge}`}>
+                          {style.label}
+                        </span>
                       </div>
-                      <span className={`rounded-full border px-3 py-1 text-xs font-medium ${style.badge}`}>
-                        {style.label}
-                      </span>
+
+                      <div className="mt-4 flex flex-wrap items-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => openUploadForApplication(app._id)}
+                          className="inline-flex items-center justify-center rounded-full border border-cyan-300/30 bg-cyan-400/10 px-4 py-2 text-xs font-semibold text-cyan-100 transition hover:bg-cyan-400/20"
+                        >
+                          Upload Documents
+                        </button>
+                        {isUploadOpen && (
+                          <button
+                            type="button"
+                            onClick={closeUploadView}
+                            className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/8 px-4 py-2 text-xs font-medium text-white transition hover:bg-white/15"
+                          >
+                            Close
+                          </button>
+                        )}
+                      </div>
+
+                      {isUploadOpen && (
+                        <div className="mt-4">
+                          <DocumentUpload applicationId={app._id} onUploadSuccess={handleUploadSuccess} />
+                        </div>
+                      )}
                     </div>
                   );
                 })
@@ -305,6 +349,14 @@ export default function Dashboard() {
                       <p className="mt-1 text-sm text-slate-400">
                         {formatCurrency(app.requestedAmount)} on {formatDate(app.createdAt)}
                       </p>
+
+                      <button
+                        type="button"
+                        onClick={() => openUploadForApplication(app._id)}
+                        className="mt-4 inline-flex items-center justify-center rounded-full border border-cyan-300/30 bg-cyan-400/10 px-4 py-2 text-xs font-semibold text-cyan-100 transition hover:bg-cyan-400/20"
+                      >
+                        Upload Documents
+                      </button>
                     </div>
                   );
                 })
@@ -312,6 +364,28 @@ export default function Dashboard() {
             </div>
           </div>
         </section>
+
+        {uploadingAppId && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 px-4 py-8 backdrop-blur-sm">
+            <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-3xl border border-white/10 bg-[#08111f] p-4 shadow-2xl shadow-black/40 sm:p-6">
+              <div className="mb-4 flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-sm uppercase tracking-[0.28em] text-cyan-200/80">Upload Documents</p>
+                  <h3 className="mt-1 text-xl font-semibold text-white">Add files to this application</h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={closeUploadView}
+                  className="rounded-full border border-white/15 bg-white/8 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15"
+                >
+                  Close
+                </button>
+              </div>
+
+              <DocumentUpload applicationId={uploadingAppId} onUploadSuccess={handleUploadSuccess} />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -12,14 +12,17 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Capture the returned user data from your login function
       const userData = await login(email, password);
-      
-      // Route based on the user's role
-      if (userData && (userData.role === 'admin' || userData.role === 'underwriter')) {
-        navigate('/admin');
+      const role = String(userData?.role || userData?.data?.role || '').toLowerCase();
+
+      if (role === 'admin') {
+        navigate('/admin', { replace: true });
+      } else if (role === 'underwriter') {
+        navigate('/underwriter/dashboard', { replace: true });
+      } else if (role === 'applicant') {
+        navigate('/dashboard', { replace: true });
       } else {
-        navigate('/dashboard');
+        navigate('/dashboard', { replace: true });
       }
     } catch (err) {
       setError(err.response?.data?.message || err.message || 'Login failed');

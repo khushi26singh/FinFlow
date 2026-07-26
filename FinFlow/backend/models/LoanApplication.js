@@ -44,6 +44,16 @@ const loanApplicationSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     },
+    // ADD THIS NEW BLOCK RIGHT HERE! 👇
+    documents: [
+      {
+        fileName: { type: String },
+        filePath: { type: String },
+        mimeType: { type: String },
+        uploadedAt: { type: Date, default: Date.now }
+      }
+    ],
+    // 👆 END OF NEW BLOCK
     eligibility: {
       isEligible: { type: Boolean },
       checks: [

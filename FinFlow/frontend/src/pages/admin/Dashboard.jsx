@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import API from '../../services/api';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 
@@ -83,9 +84,27 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <p className="text-xs uppercase tracking-[0.35em] text-cyan-200/80">Overview</p>
-        <h1 className="mt-2 text-3xl font-semibold text-white">Admin Dashboard</h1>
+      <div className="rounded-3xl border border-white/10 bg-white/6 p-5 backdrop-blur">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <p className="text-xs uppercase tracking-[0.35em] text-cyan-200/80">Overview</p>
+            <h1 className="mt-2 text-3xl font-semibold text-white">Admin Dashboard</h1>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <Link
+              to="/admin/users"
+              className="rounded-full border border-white/10 bg-white/6 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/10"
+            >
+              User Management
+            </Link>
+            <Link
+              to="/admin/applications"
+              className="rounded-full border border-cyan-300/30 bg-cyan-400/10 px-4 py-2 text-sm font-medium text-cyan-100 transition hover:bg-cyan-400/20"
+            >
+              View All Applications
+            </Link>
+          </div>
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">

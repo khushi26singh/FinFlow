@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
@@ -19,6 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(morgan('dev'));
 app.use(cookieParser());
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/api/eligibility', eligibilityRoutes);
 

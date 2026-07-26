@@ -11,7 +11,7 @@ import ApplyLoan from './pages/customer/ApplyLoan';
 import LoanHistory from './pages/customer/LoanHistory';
 import AdminLayout from './components/admin/AdminLayout';
 import AdminDashboard from './pages/admin/Dashboard';
-import AdminApplications from './pages/admin/Applications';
+import Applications from './pages/admin/Applications';
 import AdminLoanProducts from './pages/admin/LoanProducts';
 import AdminUsers from './pages/admin/Users';
 
@@ -29,7 +29,7 @@ function App() {
           <Route
             path="/dashboard"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['applicant']}>
                 <Dashboard />
               </ProtectedRoute>
             }
@@ -37,7 +37,7 @@ function App() {
           <Route
             path="/loan-products"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['applicant']}>
                 <LoanProducts />
               </ProtectedRoute>
             }
@@ -45,7 +45,7 @@ function App() {
           <Route
             path="/apply-loan"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['applicant']}>
                 <ApplyLoan />
               </ProtectedRoute>
             }
@@ -53,7 +53,7 @@ function App() {
           <Route
             path="/loan-history"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['applicant']}>
                 <LoanHistory />
               </ProtectedRoute>
             }
@@ -61,7 +61,7 @@ function App() {
           <Route
             path="/emi-calculator"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['applicant']}>
                 <EMICalculator />
               </ProtectedRoute>
             }
@@ -75,7 +75,7 @@ function App() {
             }
           >
             <Route index element={<AdminDashboard />} />
-            <Route path="applications" element={<AdminApplications />} />
+            <Route path="applications" element={<Applications />} />
             <Route path="loan-products" element={<AdminLoanProducts />} />
             <Route path="users" element={<AdminUsers />} />
             <Route path="*" element={<Navigate to="/admin" replace />} />

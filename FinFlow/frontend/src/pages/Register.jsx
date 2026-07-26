@@ -7,7 +7,6 @@ export default function Register() {
     name: '',
     email: '',
     password: '',
-    role: 'applicant',
     phone: '',
   });
   const [error, setError] = useState('');
@@ -22,7 +21,8 @@ export default function Register() {
     e.preventDefault();
     try {
       await register(formData);
-      navigate('/dashboard');
+      // Automatically redirect to the applicant dashboard after registration
+      navigate('/customer/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed');
     }
@@ -89,19 +89,7 @@ export default function Register() {
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Role</label>
-            <select
-              name="role"
-              className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-              value={formData.role}
-              onChange={handleChange}
-            >
-              <option value="applicant">Applicant (Borrower)</option>
-              <option value="underwriter">Underwriter (Officer)</option>
-              <option value="admin">Admin</option>
-            </select>
-          </div>
+          {/* The Role dropdown has been intentionally removed to prevent privilege escalation */}
 
           <button
             type="submit"

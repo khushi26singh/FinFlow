@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import API from '../../services/api';
 
@@ -61,6 +62,20 @@ export default function Users() {
             <p className="text-xs uppercase tracking-[0.35em] text-cyan-200/80">Users</p>
             <h1 className="mt-2 text-3xl font-semibold text-white">Role Management</h1>
             <p className="mt-2 text-sm text-slate-300">Review all users and update roles inline.</p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <Link
+              to="/admin"
+              className="rounded-full border border-white/10 bg-white/6 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/10"
+            >
+              Admin Dashboard
+            </Link>
+            <Link
+              to="/admin/applications"
+              className="rounded-full border border-cyan-300/30 bg-cyan-400/10 px-4 py-2 text-sm font-medium text-cyan-100 transition hover:bg-cyan-400/20"
+            >
+              View All Applications
+            </Link>
           </div>
         </div>
       </div>

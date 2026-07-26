@@ -66,6 +66,10 @@ const formatEligibilityValue = (value) => {
   return String(value);
 };
 
+const CODESPACES_BACKEND_URL = 'https://silver-meme-wrrvjpj9j7vg397r7-5000.app.github.dev';
+
+const getDocumentUrl = (filePath) => `${CODESPACES_BACKEND_URL}${filePath}`;
+
 export default function Applications() {
   const [applications, setApplications] = useState([]);
   const [search, setSearch] = useState('');
@@ -292,6 +296,35 @@ export default function Applications() {
                                       </p>
                                       <p className="mt-1 text-xs text-slate-400">Evaluated at {formatDate(app.eligibility?.evaluatedAt)}</p>
                                     </div>
+                                  </div>
+                                </div>
+
+                                <div className="rounded-3xl border border-white/10 bg-white/6 p-4 lg:col-span-2">
+                                  <h4 className="text-sm font-semibold text-white">Uploaded Documents</h4>
+                                  <div className="mt-4 space-y-3">
+                                    {app.documents?.length > 0 ? (
+                                      app.documents.map((doc, index) => (
+                                        <a
+                                          key={`${doc.fileName}-${doc.filePath}-${index}`}
+                                          href={getDocumentUrl(doc.filePath)}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-slate-950/30 px-4 py-3 transition hover:border-cyan-300/30 hover:bg-slate-950/50"
+                                        >
+                                          <div className="min-w-0">
+                                            <p className="truncate text-sm font-medium text-white">{doc.fileName}</p>
+                                            <p className="mt-1 text-xs text-slate-400">Click to open document</p>
+                                          </div>
+                                          <span className="rounded-full border border-cyan-300/20 bg-cyan-400/10 px-3 py-1 text-xs font-medium text-cyan-100">
+                                            Open
+                                          </span>
+                                        </a>
+                                      ))
+                                    ) : (
+                                      <div className="rounded-2xl border border-white/10 bg-slate-950/30 px-4 py-3 text-sm text-slate-400">
+                                        No documents uploaded yet
+                                      </div>
+                                    )}
                                   </div>
                                 </div>
                               </div>
